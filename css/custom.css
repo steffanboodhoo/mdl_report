@@ -1,0 +1,23 @@
+.btn-close{
+	margin-right: 10px;
+}
+
+.align_btn{
+	
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
+.tab-content{
+	overflow:visible;
+}
+.flex-cont{
+	display: -webkit-flex !important;
+  	display: flex !important;
+  	flex-direction: row !important;
+  	-webkit-flex-direction: row !important;
+}
+.flex-input{
+	-webkit-flex: 1;
+	flex:1;
+}

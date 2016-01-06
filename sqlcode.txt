@@ -1,0 +1,100 @@
+1)How many unique schools are registered to the system
+
+select name from mdl_cohort;
+
+
+2)How many students are registered for each school
+
+Create a view to store total students of each cohort group
+
+select 
+	cm.cohortid,count(cm.userid),m.name
+from
+	mdl_cohort_members cm, mdl_role_assignments r, mdl_cohort m
+where 
+	r.roleid = 5 and r.userid = cm.userid
+	and m.id = cm.cohortid
+group by cm.cohortid;
+
+--------------------------------------SOLUTION
+-------OPT 1
+create or replace view total_student_cohort_usage as (
+select 
+	cm.cohortid, count(l.userid)
+from 
+	mdl_logstore_standard_log l, mdl_role_assignments r, mdl_cohort_members cm
+where 
+	l.userid = r.userid and r.roleid=5
+	and l.userid = cm.userid
+group by cm.cohortid
+);
+
+select name,id from mdl_cohort;
+-------OPT 2
+create or replace view total_student_cohort_usage as (
+select 
+	cm.cohortid, count(l.userid), c.name
+from 
+	mdl_logstore_standard_log l, mdl_role_assignments r, mdl_cohort_members cm, mdl_cohort c
+where 
+	l.userid = r.userid and r.roleid=5
+	and l.userid = cm.userid
+	and c.id = cm.cohortid
+group by cm.cohortid
+);
+
+3)
+how many students actively use the system?
+
+what defines active
+how many times Ki has a student i used the system [between the intervals t1,t2]
+which students i used it enough to be considered active, Ki > Q[threshold]
+
+select
+	l.userid,count(l.id) as 'usage'
+from 
+	mdl_logstore_standard_log l, mdl_role_assignments r
+where 
+	r.userid = l.userid and r.roleid=5 
+group by l.userid
+having 
+	count(l.id)>5;
+
+4)
+how many students actively use the system by school?
+result from (3) grouped by cohort + textual aggregation
+
+--------------------------------------SOLUTION 
+-------OPT A
+
+select
+	l.userid,count(l.id) as 'usage',c.name
+from 
+	mdl_logstore_standard_log l, mdl_role_assignments r, mdl_cohort c, mdl_cohort_members cm
+where 
+	r.userid = l.userid and r.roleid=5 
+	and cm.userid=l.userid and cm.cohortid=c.id
+	and l.timecreated>=0 and l.timecreated<=1444173037
+group by l.userid
+having 
+	count(l.id)>5;
+
+select 
+	c.name,c.id,cm.userid 
+from 
+	mdl_cohort c, mdl_cohort_members cm
+where
+	c.id = cm.cohortid;
+
+5)
+
+------------------------------------------------------------------------------
+number of logs               [per cohort]         [per day*]       [by students]
+mdl_logstore_standard_log  mdl_cohort_members  /programmed/      mdl_role_assignments
+select 
+	l.userid, l.timecreated, cm.cohortid
+from
+	mdl_logstore_standard_log l,mdl_cohort_members cm, mdl_role_assignments r
+where 
+	l.userid=cm.userid and r.userid = l.userid
+	and r.roleid=5;	

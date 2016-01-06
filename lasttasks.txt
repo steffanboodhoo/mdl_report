@@ -1,0 +1,101 @@
+mdl_user_enrolments;
++--------------+------------+------+-----+------------+----------------+
+| Field        | Type       | Null | Key | Default    | Extra          |
++--------------+------------+------+-----+------------+----------------+
+| id           | bigint(10) | NO   | PRI | NULL       | auto_increment |
+| status       | bigint(10) | NO   |     | 0          |                |
+| enrolid      | bigint(10) | NO   | MUL | NULL       |                |
+| userid       | bigint(10) | NO   | MUL | NULL       |                |
+| timestart    | bigint(10) | NO   |     | 0          |                |
+| timeend      | bigint(10) | NO   |     | 2147483647 |                |
+| modifierid   | bigint(10) | NO   | MUL | 0          |                |
+| timecreated  | bigint(10) | NO   |     | 0          |                |
+| timemodified | bigint(10) | NO   |     | 0          |                |
++--------------+------------+------+-----+------------+----------------+
+
+mdl_enrol;
++-----------------+---------------+------+-----+---------+----------------+
+| Field           | Type          | Null | Key | Default | Extra          |
++-----------------+---------------+------+-----+---------+----------------+
+| id              | bigint(10)    | NO   | PRI | NULL    | auto_increment |
+| enrol           | varchar(20)   | NO   | MUL |         |                |
+| status          | bigint(10)    | NO   |     | 0       |                |
+| courseid        | bigint(10)    | NO   | MUL | NULL    |                |
+| sortorder       | bigint(10)    | NO   |     | 0       |                |
+| name            | varchar(255)  | YES  |     | NULL    |                |
+| enrolperiod     | bigint(10)    | YES  |     | 0       |                |
+| enrolstartdate  | bigint(10)    | YES  |     | 0       |                |
+| enrolenddate    | bigint(10)    | YES  |     | 0       |                |
+| expirynotify    | tinyint(1)    | YES  |     | 0       |                |
+| expirythreshold | bigint(10)    | YES  |     | 0       |                |
+| password        | varchar(50)   | YES  |     | NULL    |                |
+| roleid          | bigint(10)    | YES  |     | 0       |                |
+| timecreated     | bigint(10)    | NO   |     | 0       |                |
+| timemodified    | bigint(10)    | NO   |     | 0       |                |
++-----------------+---------------+------+-----+---------+----------------+
+
+mdl_course;
++-------------------+--------------+------+-----+---------+----------------+
+| Field             | Type         | Null | Key | Default | Extra          |
++-------------------+--------------+------+-----+---------+----------------+
+| id                | bigint(10)   | NO   | PRI | NULL    | auto_increment |
+| category          | bigint(10)   | NO   | MUL | 0       |                |
+| sortorder         | bigint(10)   | NO   | MUL | 0       |                |
+| fullname          | varchar(254) | NO   |     |         |                |
+| shortname         | varchar(255) | NO   | MUL |         |                |
+| idnumber          | varchar(100) | NO   | MUL |         |                |
+| startdate         | bigint(10)   | NO   |     | 0       |                |
+| marker            | bigint(10)   | NO   |     | 0       |                |
+| visible           | tinyint(1)   | NO   |     | 1       |                |
+| timecreated       | bigint(10)   | NO   |     | 0       |                |
+| timemodified      | bigint(10)   | NO   |     | 0       |                |
++-------------------+--------------+------+-----+---------+----------------+
+
+
+
+1) when a user logs in, how do we get their userid using moodle apis
+
+
+2)teacher verification
+what courses are you enrolled in
+i.e. getting all course id's where userid = X and roleid = teacher
+
+select 
+	e.courseid 
+from 
+	mdl_user_enrolments ue, mdl_enrol e
+where 
+	roleid = 0 and userid = X
+	and ue.enrolid = e.id;
+
+fetching related course student stats
+2)what userid's for a course
+i.e. getting all user id's where roleid = student and courseid = Y
+
+select 
+	ue.userid 
+from 
+	mdl_user_enrolments ue, mdl_enrol e
+where 
+	e.roleid = 5 and ue.enrolid = e.id
+	and e.courseid=Y;
+
+now that i have all the userid's
+3)fetch activity for each userid
+mdl_logstore_standard_log
+logged in vs restored what does restored mean.
+
+4) How to export graph to pdf and how to export html table to pdf
+
+5) Sum total each list, put the total as the value and 'total' as the attribute
+
+6) Naming and descriptions 
+
+Teacher report
+given schools show student activity
+
+Descriptions of reports
+headers
+instructions for graphs
+totals at the end of tables
+
