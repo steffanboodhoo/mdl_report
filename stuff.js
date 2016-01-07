@@ -223,10 +223,7 @@
 				if(typeof(data[k]) != "object"){
 					console.log(data[k]);
 					tr.append($('<td/>').append(k)); tr.append($('<td/>').append(data[k]));
-					if(typeof(clickCallBack)=='function'){//used to do something
-					}
 				}else{
-					//some drama for ur mama
 					var row_data = data[k]
 					for(var i=0; i<row_data.length; i++){
 						tr.append($('<td/>').append(row_data[i])); //tr.append($('<td/>').append(data[k]));

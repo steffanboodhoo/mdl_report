@@ -19,9 +19,10 @@ ini_set('memory_limit','256M');
 		foreach ($result as $row) {
 		   convert_name($row->name,$namelist)."\n";
 		}
-		
-		$arr['count']=count($namelist);
-		$return_obj['values']=$arr;
+		$return_vals = [];
+		// $arr['count']=count($namelist);
+		array_push($return_vals,['count',count($namelist)]);
+		$return_obj['values']=$return_vals;
 		$return_obj['column_names']=['attribute','value'];
 		echo json_encode($return_obj);
 	}
@@ -43,6 +44,7 @@ ini_set('memory_limit','256M');
 		
 		$school_count = array();
 		$namelist = array();
+
 		foreach ($result as $row) {
 		   $key = convert_name($row->name,$namelist);
 		   if(array_key_exists($key, $school_count)){
@@ -51,7 +53,13 @@ ini_set('memory_limit','256M');
 		   		$school_count[$key] = $row->amt;
 		   }
 		}
-		$return_obj['values']=$school_count;
+
+
+		$return_vals = [];
+		foreach($school_count as $school => $val){
+			array_push($return_vals, [$school,$val]);
+		}
+		$return_obj['values']=$return_vals;
 		$return_obj['column_names']=['Institution','Students registered'];
 		echo json_encode($return_obj);
 	}
@@ -77,8 +85,10 @@ ini_set('memory_limit','256M');
 				"having count(l.id)>".$threshold.";";
 		$result = $DB->get_records_sql($code, null);
 		
-		$arr['count'] = count($result);
-		$return_obj['values'] = $arr;
+		$return_vals = [];
+		// $arr['count'] = count($result);
+		array_push($return_vals,['count',count($result)]);
+		$return_obj['values'] = $return_vals;
 		$return_obj['column_names'] = ['attribute','value'];
 		echo json_encode($return_obj);
 	}
@@ -115,7 +125,11 @@ ini_set('memory_limit','256M');
 		   }
 		}
 		arsort($school_count);
-		$return_obj['values'] = $school_count;
+		$return_vals = [];
+		foreach($school_count as $school => $val){
+			array_push($return_vals, [$school,$val]);
+		}
+		$return_obj['values'] = $return_vals;
 		$return_obj['column_names'] = ['Institution','User Count'];
 		echo json_encode($return_obj);
 	}
@@ -148,7 +162,13 @@ ini_set('memory_limit','256M');
 			$key = convert_name($row->name,$namelist);
 			$teacher_list[($row->userid)]=$row->amt;
 		}
-		$return_obj['values'] = $teacher_list;
+
+		$return_vals = [];
+		foreach($teacher_list as $teacher => $val){
+			array_push($return_vals, [$teacher,$val]);
+		}
+
+		$return_obj['values'] = $return_vals;
 		$return_obj['column_names'] = ['teacher id',' activity count'];
 		echo json_encode($return_obj);
 	}
@@ -244,9 +264,11 @@ ini_set('memory_limit','256M');
 	  			"and r.roleid=5";	
 	  	
 		$result = $DB->get_records_sql($code, null);
-		
+		$return_vals = [];
+		$obj = reset($result);
+		array_push($return_vals,['count',$obj->count]);	
 		$return_obj['column_names'] = ['attribute','value'];
-		$return_obj['values'] = reset($result);
+		$return_obj['values'] = $return_vals;
 		echo json_encode($return_obj);
 	}
 	// usageLTI(3,0,1445744779);
