@@ -174,11 +174,9 @@
 	    function _get(url,params,call_back){
 
 	    	var adj_url = window.location.origin;
-	    	if(url!=null){
-	    		//do something
-	    	}
-	    	adj_url+='/moodle_update/report/test/api.php';
-	    	console.log('get stuff');
+	    	adj_url += getUrl() +"/api.php";
+	    	console.log(adj_url);
+	    	// adj_url+='/moodle_update/report/test/api.php';
 	        $.ajax({
 	            url:adj_url,
 	            type:'GET',
@@ -194,6 +192,13 @@
             		"Content-Type":"application/x-www-form-urlencoded",
         		}
 	        })
+	    	
+	    }
+	    function getUrl(){
+	    	var path = $("#base_url").text();
+	    	console.log(path);
+	    	var tolkens = path.split('html');
+	    	return tolkens[1];
 	    }
 
 	    function createTable(table_container, dataObj, clickCallBack){
@@ -217,18 +222,18 @@
 			var tbody = $('<tbody/>');
 			
 			//body [creation/init]
-			for(var k in data){
+			for(var k=0; k<data.length; k++){
 				tr = $('<tr/>');// create row
-
+/*
 				if(typeof(data[k]) != "object"){
 					console.log(data[k]);
 					tr.append($('<td/>').append(k)); tr.append($('<td/>').append(data[k]));
-				}else{
+				}else{*/
 					var row_data = data[k]
 					for(var i=0; i<row_data.length; i++){
 						tr.append($('<td/>').append(row_data[i])); //tr.append($('<td/>').append(data[k]));
 					}
-				}
+				// }
 				tbody.append(tr);
 			}
 

@@ -21,3 +21,6 @@
 	-webkit-flex: 1;
 	flex:1;
 }
+#base_url{
+	visibility: hidden;
+}

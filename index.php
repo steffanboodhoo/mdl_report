@@ -70,7 +70,7 @@ if($req_type==null){
 	// echo "---------".$userid;
 	
 	
-	echo "<div id='base_url' value=".getcwd()."></div>";
+	echo "<p id='base_url'>".getcwd()."</p>";
 	// echo dirname(dirname(__FILE__));
 }
 
