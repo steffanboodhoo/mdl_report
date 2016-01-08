@@ -5,8 +5,6 @@
 	jQuery(function($) {
 		var chart_count=0, curr_opt=null;
 		$.get('literals.js');
-		var base_url = $('#base_url').val();
-		console.log('---------'+base_url);
 		var OPTIONS = ['Count_Schools','Students_Institution','Active_Students','Active_Students_School','Active_teachers','LTI_usage'];
 	   
 	    var CONFIGURATIONS = {};
@@ -30,8 +28,7 @@
 	    $.get('libs/jspdf.js');
 	    $.get('query.js');
 	    
-	    // init();
-		// daily_Cohort_Usage();	    
+	    
 	    (function(){
 	    	//Structure 
 	    	$('<div/>',{'id':'content-container','class':'container-fluid'}).appendTo($('#main'));
@@ -93,8 +90,6 @@
 						function(key){
 							var params = {'start_time':1438387200,'end_time':1444173037,'req_type':'daily_Cohort_Usage'}
 			    			_get(null,params,function(data){
-					    		//console.log(data);	
-					    		// verticalFilterInstitution(data,key);
 					    		verticalFilterInstitutionTime(data,key);
 					    	});
 						}
@@ -147,7 +142,6 @@
 	    	$('#btn_cheat').click(handle_option2);
 
 	    	function handle_option2(){
-		    	console.log('clicke');
 		    	//Grab dates
 				var dates = [$('#start_date').datepicker('getDate'),$('#end_date').datepicker('getDate')];
 				dates = [dates[0].getTime()/1000,dates[1].getTime()/1000];
@@ -167,7 +161,6 @@
 					_get(null,{'start_time':dates[0],'end_time':dates[1],'threshold':threshold,'req_type':'LTI_usage'},function(dataObj){createTable('#primary-report-content',dataObj)});
 				
 				}
-		    	console.log(dates);
 		    }
 	    }	    
 	    
@@ -175,14 +168,13 @@
 
 	    	var adj_url = window.location.origin;
 	    	adj_url += getUrl() +"/api.php";
-	    	console.log(adj_url);
 	    	// adj_url+='/moodle_update/report/test/api.php';
 	        $.ajax({
 	            url:adj_url,
 	            type:'GET',
 	            data:params,
 	            success:function(response){
-	            	console.log(response);
+	            	// console.log(response);
 	                if(typeof call_back==='function')
 	                    call_back(JSON.parse(response))
 	                else
@@ -196,15 +188,12 @@
 	    }
 	    function getUrl(){
 	    	var path = $("#base_url").text();
-	    	console.log(path);
 	    	var tolkens = path.split('html');
 	    	return tolkens[1];
 	    }
 
 	    function createTable(table_container, dataObj, clickCallBack){
-	    	console.log(dataObj)
 	    	var columnNames = dataObj['column_names'], data = dataObj['values'];
-	    	console.log(data);
 	    	var table = $('<table/>',{id:'results_table',class:'display table table-condensed table-hover table-striped',cellspacing:'0',width:'100%'}),
 			thead = $('<thead/>'), tr = $('<tr/>');
 
@@ -224,16 +213,10 @@
 			//body [creation/init]
 			for(var k=0; k<data.length; k++){
 				tr = $('<tr/>');// create row
-/*
-				if(typeof(data[k]) != "object"){
-					console.log(data[k]);
-					tr.append($('<td/>').append(k)); tr.append($('<td/>').append(data[k]));
-				}else{*/
-					var row_data = data[k]
-					for(var i=0; i<row_data.length; i++){
-						tr.append($('<td/>').append(row_data[i])); //tr.append($('<td/>').append(data[k]));
-					}
-				// }
+				var row_data = data[k]
+				for(var i=0; i<row_data.length; i++){
+					tr.append($('<td/>').append(row_data[i])); //tr.append($('<td/>').append(data[k]));
+				}
 				tbody.append(tr);
 			}
 
@@ -252,12 +235,8 @@
 			    /* Executes after data is loaded and rendered */
 			    grid.find(".command-graph").on("click", function(e){
 			        var key = $(this).data("row-id");
-			    	console.log('about to call callback passed into createTable');
 			    	clickCallBack(key);
-			    })/*.end().find(".command-delete").on("click", function(e)
-			    {
-			        alert("You pressed delete on row: " + $(this).data("row-id"));
-			    })*/;
+			    });
 			});
 	    	setupTableExport();
 
@@ -284,13 +263,13 @@
 			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> Word</a>").click(function(){$('#results_table').tableExport({type:'doc',escape:'false'});})); 
 	    }
 	    
-	    function daily_Cohort_Usage(){
+	  /*  function daily_Cohort_Usage(){
 	    	var params = {'start_time':1438387200,'end_time':1444173037,'req_type':'daily_Cohort_Usage'}
 	    	_get(null,params,function(data){
 	    		//console.log(data);	
 	    		verticalFilterSystem(data);
 	    	});	
-	    }
+	    }*/
 
 	    function verticalFilterInstitution(dataObj,name){
 	    	var data = dataObj['values'];
@@ -319,7 +298,7 @@
 	    	$('html, body').animate({'scrollTop': $(idObj['container']).offset().top}, 'slow', 'swing');
 	    }
 
-	    function verticalFilterSystem(dataObj){
+	   /* function verticalFilterSystem(dataObj){
 	    	var data = dataObj['values'];
 	    	var time_series = [];//list of lists
 	    	
@@ -335,7 +314,7 @@
 	    	var idObj = createChart();
 	    	createChartT(time_series,idObj['container']);
 	    	$('html, body').animate({'scrollTop': $(idObj['container']).offset().top}, 'slow', 'swing');
-	    }
+	    }*/
 
 	    function verticalFilterInstitutionTime(dataObj,name){
 	    	var data = dataObj['values'];
