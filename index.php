@@ -32,8 +32,8 @@ if($req_type==null){
 	// echo "<data id='base_url'>".getcwd()."</data>";
 	echo '<div class="nav-tabs-custom">
 	                <ul class="nav nav-tabs nav-justifie" id ="nav_tabs">
-	                  <li id="ti0" class="ctabs active"><a id="link0" href="#tab_0" data-toggle="tab">Display</a></li>
-	                  <li id="ti1" class="ctabs" ><a id="link1" href="#tab_1" data-toggle="tab">Add</a></li>
+	                  <li id="ti0" class="ctabs active"><a id="link0" href="#tab_0" data-toggle="tab">Reports</a></li>
+	                  <li id="ti1" class="ctabs" ><a id="link1" href="#tab_1" data-toggle="tab">Query</a></li>
 	                </ul>
 	                
 	                <div class="tab-content">

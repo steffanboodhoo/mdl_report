@@ -3,7 +3,7 @@
 
 (function(window){
 	jQuery(function($) {
-		var chart_count=0, curr_opt=null;
+		var chart_count=0, curr_opt=null, export_table=null, export_table_container=null, export_table_callback=null,export_column_names=null;
 		$.get('literals.js');
 		var OPTIONS = ['Count_Schools','Students_Institution','Active_Students','Active_Students_School','Active_teachers','LTI_usage'];
 	   
@@ -221,11 +221,13 @@
 			}
 
 			table.append(thead);table.append(tbody);
+			//these are used when doing exports to recreate the table with a full set of data
+	    	export_table=table.clone(), export_table_container=table_container, export_table_callback=clickCallBack, export_column_names=columnNames;
 	    	$(table_container).empty();
-	    	Object.keys($);
 	    	$(table_container).append($('<div/>',{'class':'container-fluid','id':'table-options'}));
 	    	$(table_container).append(table);
-	    	var grid = $('#results_table').bootgrid({
+	    	grid = $('#results_table').bootgrid({
+	    		// rowCount:-1, 
 	    		 formatters: {
 			        "commands": function(column, row){
 			            return "<button type=\"button\" class=\"btn btn-xs btn-default command-graph\" data-row-id=\"" + row[columnNames[0]] + "\"><span class=\"fa fa-bar-chart\"></span></button> ";
@@ -241,6 +243,27 @@
 	    	setupTableExport();
 
 	    }
+	    function preExportTableFix(){
+	    	console.log("preExportTable");
+	    	$(export_table_container).empty();
+	    	$(export_table_container).append($('<div/>',{'class':'container-fluid','id':'table-options'}));
+	    	$(export_table_container).append(export_table);
+	    	grid = $('#results_table').bootgrid({
+	    		rowCount:-1, 
+	    		 formatters: {
+			        "commands": function(column, row){
+			            return "<button type=\"button\" class=\"btn btn-xs btn-default command-graph\" data-row-id=\"" + row[export_column_names[0]] + "\"><span class=\"fa fa-bar-chart\"></span></button> ";
+			        }
+			    }
+			}).on("loaded.rs.jquery.bootgrid", function(){
+			    /* Executes after data is loaded and rendered */
+			    grid.find(".command-graph").on("click", function(e){
+			        var key = $(this).data("row-id");
+			    	clickCallBack(key);
+			    });
+			});
+	    	setupTableExport();
+	    }
 
 	    function setupTableExport(){
 	    	var html =			"<div class=\"btn-group align_btn\">"+
@@ -253,14 +276,26 @@
 			$('#table-option-left').append(html);
 			html = "<h3>Description</h3><p>"+DESCRIPTIONS[curr_opt]+"</p>";
 			$('#table-option-right').append(html);
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> JSON</a>").click(function(){$('#results_table').tableExport({type:'json',escape:'false'});}));
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> CSV</a>").click(function(){$('#results_table').tableExport({type:'csv',escape:'false'});}));
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> JSON</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'json',escape:'false'});}));
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> CSV</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'csv',escape:'false'});}));
 			$('#export_btn').append($('<li/>',{'class':'divider'}));
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> PNG</a>").click(function(){$('#results_table').tableExport({type:'png',escape:'false'});}));
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> PDF</a>").click(function(){$('#results_table').tableExport({type:'pdf',pdfFontSize:'7',escape:'false'});}));
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> PNG</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'png',escape:'false'});}));
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> PDF</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'pdf',pdfFontSize:'7',escape:'false'});}));
 			$('#export_btn').append($('<li/>',{'class':'divider'}));
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> XLS</a>").click(function(){$('#results_table').tableExport({type:'excel',escape:'false'});}));
-			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> Word</a>").click(function(){$('#results_table').tableExport({type:'doc',escape:'false'});})); 
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> XLS</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'excel',escape:'false'});}));
+			$('#export_btn').append($('<li/>').append(" <i class=\"fa fa-bars\"></i> Word</a>").click(function(){
+																										preExportTableFix();
+																										$('#results_table').tableExport({type:'doc',escape:'false'});})); 
 	    }
 	    
 	  /*  function daily_Cohort_Usage(){
@@ -320,6 +355,7 @@
 	    	var data = dataObj['values'];
 	    	var dates = [];
 	    	var institution_data = {};
+	    	console.log(dataObj);
 	    	for(time in data){
 	    		dates.push((new Date().setSeconds(time)));
 	    		for(institution in data[time]){
@@ -336,6 +372,7 @@
 	    	
 	    	
 	    	var idObj = createChart();
+	    	// console.log(time_series);
 	    	createChartT(time_series, idObj['container']);
 	    	$('html, body').animate({'scrollTop': $(idObj['container']).offset().top}, 'slow', 'swing');
 	    }
@@ -599,7 +636,7 @@
 	            },
 	            yAxis: {
 	                title: {
-	                    text: 'loggins'
+	                    text: 'Number of students'
 	                }
 	            },
 	            legend: {
